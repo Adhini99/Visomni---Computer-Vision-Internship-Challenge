@@ -1,135 +1,62 @@
-Visomni — Computer Vision Internship Challenge
+AI Assignment: Footfall Counter using Computer Vision
+=======================================================
 
-Author: Adhini Nasarin P S
-GitHub Repository: Visomni---Computer-Vision-Internship-Challenge
+Objective:
+-----------
+To develop a real-time **footfall counting system** that detects and tracks people in a video using
+YOLOv8 and a Centroid Tracking algorithm. The system counts the number of people entering and exiting
+a defined area, providing visual analytics via an annotated output video and event log.
 
-Tools Used: YOLOv8, OpenCV, Shapely, Pandas, Python 3.10+, Jupyter Notebook
+Approach:
+---------
+1. **Detection:**
+   - Model: YOLOv8 (weights: 'yolov8n.pt' by default)
+   - Task: Person detection (COCO class 0)
+   - Framework: Ultralytics YOLOv8 for efficient and accurate detection
 
-🎯 Project Overview
+2. **Tracking:**
+   - Algorithm: Centroid Tracker (custom implementation)
+   - Purpose: Maintains consistent IDs for detected persons across frames, even with brief occlusions
 
-This project implements an AI-based video analytics system that detects and tracks people in real-time and monitors their movement inside a restricted polygonal zone.
-It is designed as part of the Visomni Computer Vision Internship Challenge, which focuses on developing intelligent vision systems to make industrial environments safer and more efficient.
+3. **Counting Logic:**
+   - A virtual horizontal line is drawn across the frame (configurable position)
+   - Direction-based counting:
+        - When a tracked person crosses upward → **Exit Count**
+        - When a tracked person crosses downward → **Entry Count**
 
-🧩 Objectives
+4. **Visualization:**
+   - Bounding boxes, IDs, and entry/exit counts are drawn on the video frames
+   - Final output video is saved with all visual annotations
 
-Detect people in each frame of a video.
+Usage:
+------
+1. Place your **input video** file (e.g., 'input_video.mp4') in the same folder as this script.
+2. Update the path inside the code:
+      SOURCE = "input_video.mp4"
+3. Run the notebook or Python script:
+      python footfall_counter_merged.py
+4. The processed output video and event logs will be automatically generated.
 
-Assign unique IDs to each detected person and track them across frames.
+Generated Files:
+----------------
+- **output_video.avi** : Video annotated with bounding boxes, track IDs, and counts
+- **count_log.csv**    : CSV file containing timestamped entry and exit events
 
-Define a polygonal zone (restricted area).
+Dependencies:
+-------------
+- Python 3.8+
+- ultralytics (YOLOv8)
+- opencv-python
+- numpy
+- imutils
 
-Log events when a person:
+Install using:
+    pip install ultralytics opencv-python imutils numpy
 
-enters the zone
+Notes & Challenges:
+-------------------
+- Re-identification: If a person leaves the frame and re-enters, the tracker may assign a new ID.
+- Accuracy: Adjust confidence threshold and centroid distance parameters for best results.
+- For higher performance, resize input frames or switch to 'yolov8s' for better detection in crowded scenes.
+- System assumes a top-down or fixed camera angle for optimal counting accuracy.
 
-stays for more than 5 seconds
-
-exits the zone
-
-⚙️ Technologies & Libraries
-Library	Purpose
-Ultralytics YOLOv8	Person detection & tracking
-OpenCV	Frame processing & video rendering
-Shapely	Polygonal zone definition & point-in-polygon checks
-Pandas	Event logging to CSV
-TQDM	Progress visualization during frame processing
-🧱 System Architecture
-
-Input Video → YOLOv8 Detection
-
-Detects all persons (class ID: 0).
-
-YOLOv8 Tracking (persist=True)
-
-Assigns unique, persistent track IDs.
-
-Zone Detection
-
-Uses Shapely to check if a tracked person’s center point lies within the polygonal restricted zone.
-
-Event Logic
-
-Logs “entered”, “stayed_5s”, and “exited” events based on frame timestamps.
-
-Output
-
-Annotated video (output.mp4)
-
-Event log file (events.csv)
-
-📂 Project Structure
-Visomni---Computer-Vision-Internship-Challenge/
-│
-├── main.ipynb          # Main notebook with full implementation
-├── events.csv          # Event log (timestamp, track_id, event)
-├── output.mp4          # Processed output video with bounding boxes & zones
-├── README.txt          # Short note for submission
-├── README.md           # Detailed GitHub documentation
-├── input.mp4           # Input test video (optional)
-└── .git/               # Git commit history (required for submission)
-
-🧪 How to Run Locally
-# Clone the repository
-git clone https://github.com/Adhini99/Visomni---Computer-Vision-Internship-Challenge.git
-cd Visomni---Computer-Vision-Internship-Challenge
-
-# (Optional) Create virtual environment
-python -m venv venv
-source venv/bin/activate   # or venv\\Scripts\\activate on Windows
-
-# Install dependencies
-pip install ultralytics opencv-python-headless pandas shapely tqdm
-
-# Open and run the notebook
-jupyter notebook main.ipynb
-
-🧾 Sample Output
-
-Output Video:
-Annotated with:
-
-Bounding boxes
-
-Track IDs
-
-Zone polygon
-
-Events Logged (events.csv):
-
-timestamp_seconds	track_id	event
-0.0	3	entered
-6.2	3	stayed_5s
-8.5	3	exited
-🚀 Key Features
-
-✅ Real-time person detection and tracking
-✅ Polygonal zone definition with dynamic coordinates
-✅ Event logging for entry, exit, and stay duration
-✅ Modular, extensible pipeline for industrial monitoring
-✅ Clean and documented Jupyter notebook workflow
-
-🧩 Improvements Implemented
-
-Fixed exited_lost issue by merging with proper exited events.
-
-Added configurable stay time threshold (STAY_THRESHOLD).
-
-Enhanced visual output clarity and annotation consistency.
-
-🧠 Challenges & Learnings
-
-Maintaining tracking consistency for re-entering persons.
-
-Balancing accuracy vs. performance when using different YOLOv8 variants.
-
-Designing a clear event-based logging mechanism using timestamps.
-
-Understanding how YOLO’s internal tracker manages lost detections.
-
-🏁 Results
-
-The system successfully detects and tracks multiple individuals simultaneously, logs all relevant events, and outputs both a visual and tabular summary of activities in the monitored zone.
-
-🤝 Acknowledgment
-
-This project was completed as part of the Visomni Computer Vision Internship Challenge, aiming to create vision-based systems for industrial safety and efficiency
